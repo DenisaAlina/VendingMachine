@@ -6,16 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 public class VendingMachineImpl implements VendingMachine{
-    private int depositPool;
-    private Map<String, Product> products;
+    private int depositPool =0;
+    private List< ProductInterface> products=new ArrayList<>();
 
     public VendingMachineImpl() {
-        depositPool = 0;
-        products = new HashMap<>();
-
         // Adding some products to the vending machine
-        products.put("C1", new Candy("C1", "Chocolate Bar", 10, "Chocolate", 15));
-        products.put("D1", new Drink("D1", "Soda Can", 15, 330, 10));
+        products.add(new Candy(1, "Chocolate Bar", 10, 12, "strawberry"));
+        products.add(new Drink(2, "Soda Can", 15, 330, 10));
     }
 
     @Override
@@ -29,23 +26,21 @@ public class VendingMachineImpl implements VendingMachine{
         }
         throw new IllegalArgumentException("Invalid currency amount");
     }
-
     @Override
-    public Product request(String productId) {
-        Product product = products.get(productId);
-        if (product == null) {
-            throw new IllegalArgumentException("Product not found");
+    public ProductInterface request(int productId) {
+        for (ProductInterface product : products) {
+            if (product.getId()==productId ) {
+                if (depositPool >= product.getPrice()) {
+                    depositPool -= product.getPrice();
+                    return product;
+                } else {
+                    throw new IllegalArgumentException("Not enough balance");
+                }
+            }
         }
-        if (depositPool >= product.getPrice() && product.getQuantity()>0) {
-            depositPool -=  product.getPrice();
-            product.setQuantity(product.getQuantity()-1);
-            return product;
-        } else if(depositPool < product.getPrice()) {
-            throw new IllegalStateException("Not enough balance");
-        }else{
-            throw new IllegalStateException("Product out of stock");
-        }
+        throw new IllegalArgumentException("Product not found");
     }
+
 
     @Override
     public int endSession() {
@@ -54,24 +49,30 @@ public class VendingMachineImpl implements VendingMachine{
         return moneyToReturn;
     }
 
-    @Override
-    public String getDescription(String productId) {
-        Product product = products.get(productId);
-        return product != null ? product.examine() : "Product not found";
-    }
 
+   @Override
+   public String getDescription(int productId) {
+       for (ProductInterface product : products) {
+           if (product.getId() == productId) {
+               return product != null ? product.examine() : "Product not found";
+           }
+       }
+       return "Product not found";
+   }
 
     @Override
     public int getBalance() {
         return depositPool;
     }
 
-    @Override
+
+
     public String[] getProducts() {
-        List<String> productList = new ArrayList<>();
-        for (Product product : products.values()) {
-            productList.add(product.getId() + ", " + product.getName() + ", " + product.getPrice());
+        String[] productList = new String[products.size()];
+        for (int i = 0; i < products.size(); i++) {
+            ProductInterface product = products.get(i);
+            productList[i] = "ID: " + product.getId() + ", Name: " + product.getName() + ", Price: " + product.getPrice();
         }
-        return productList.toArray(new String[0]);
+        return productList;
     }
 }

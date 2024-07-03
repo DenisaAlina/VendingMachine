@@ -1,13 +1,11 @@
 package se.lexicon;
 
-import se.lexicon.model.Product;
+
+import se.lexicon.model.ProductInterface;
 import se.lexicon.model.VendingMachine;
 import se.lexicon.model.VendingMachineImpl;
 
-/**
- * Hello world!
- *
- */
+
 public class App {
     public static void main(String[] args) {
         VendingMachine vendingMachine = new VendingMachineImpl();
@@ -16,7 +14,7 @@ public class App {
         vendingMachine.addCurrency(20);
 
         // Requesting a product
-        Product product = vendingMachine.request("S1");
+        ProductInterface product = vendingMachine.request(2);
         System.out.println("Bought: " + vendingMachine.getDescription(product.getId()));
         System.out.println("Examine: " + product.examine());
         System.out.println("Use: " + product.use());
@@ -29,3 +27,5 @@ public class App {
     }
 
 }
+
+

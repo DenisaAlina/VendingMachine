@@ -2,9 +2,9 @@ package se.lexicon.model;
 
 public interface VendingMachine {
     void addCurrency(int amount);
-    Product request(String productId);
+    ProductInterface request(int productId);
     int endSession();
-    String getDescription(String productId);
+    String getDescription(int productId);
     int getBalance();
     String[] getProducts();
 
